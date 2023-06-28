@@ -14,8 +14,6 @@ int validarTelefono(int telefono) {
     return telefono;
 }
 
-
-
 class Persona {
 private:
     string clave;
@@ -38,7 +36,7 @@ public:
         return os;
     }
 
-    virtual void agregarEnVector(vector<Persona*> vectorPersonas) = 0;
+    virtual void agregarEnVector(vector<Persona> vectorPersonas) = 0;
     float getDescuento();
 };
 
@@ -89,8 +87,8 @@ public:
         }
     }
 
-    void agregarEnVector(vector<Persona*> vectorPersonas) {
-        vectorPersonas.push_back(this);
+    void agregarEnVector(vector<Persona> vectorPersonas) {
+        vectorPersonas.push_back(*this);
         cout << "El cliente individual se ha agregado correctamente al vector." << endl;
     }
 
@@ -146,8 +144,8 @@ public:
         }
     }
 
-    void agregarEnVector(vector<Persona*> vectorPersonas) {
-        vectorPersonas.push_back(this);
+    void agregarEnVector(vector<Persona> vectorPersonas) {
+        vectorPersonas.push_back(*this);
         cout << "El cliente corporativo se ha agregado correctamente al vector." << endl;
     }
 
@@ -162,8 +160,8 @@ public:
 
     Vendedor(string nombre, string codigo, float salario) : Persona(nombre, codigo), salario(salario) {}
 
-    void agregarEnVector(vector<Persona*> vectorPersonas) {
-        vectorPersonas.push_back(this);
+    void agregarEnVector(vector<Persona> vectorPersonas) {
+        vectorPersonas.push_back(*this);
         cout << "El vendedor se ha agregado correctamente al vector." << endl;
     }
 };
@@ -231,51 +229,49 @@ void ordenarPorNombre(vector<Persona*> vectorPersonas) {
 }
 
 int main() {
-    vector<Persona*> vectorPersonas;
+    vector<Persona> vectorPersonas;
     vector<Producto> vectorProductos;
-    vector<Persona*> vectorVendedores;
+    vector<Persona> vectorVendedores;
     ClienteIndividual cliente1("Cliente1", "C001", 123456789, "clave1", "cliente1@example.com");
     cliente1.nivelA();
-    vectorPersonas.push_back(&cliente1);
+    vectorPersonas.push_back(cliente1);
 
     ClienteIndividual cliente2("Cliente2", "C002", 987654321, "clave2", "cliente2@example.com");
     cliente2.nivelB();
-    vectorPersonas.push_back(&cliente2);
+    vectorPersonas.push_back(cliente2);
 
-    ClienteCorporativo cliente3("Cliente3", "C003", 456789123, "clave3", "cliente3@example.com");
-    cliente3.nivelC();
-    vectorPersonas.push_back(&cliente3);
+    
 
     // Crear vendedores por defecto
     Vendedor vendedor1("Vendedor1", "V001", 1000.0);
-    vectorVendedores.push_back(&vendedor1);
+    vectorVendedores.push_back(vendedor1);
 
     Vendedor vendedor2("Vendedor2", "V002", 1500.0);
-    vectorVendedores.push_back(&vendedor2);
+    vectorVendedores.push_back(vendedor2);
 
     Vendedor vendedor3("Vendedor3", "V003", 1200.0);
-    vectorVendedores.push_back(&vendedor3);
+    vectorVendedores.push_back(vendedor3);
 
     Vendedor vendedor4("Vendedor4", "V004", 1100.0);
-    vectorVendedores.push_back(&vendedor4);
+    vectorVendedores.push_back(vendedor4);
 
     Vendedor vendedor5("Vendedor5", "V005", 1300.0);
-    vectorVendedores.push_back(&vendedor5);
+    vectorVendedores.push_back(vendedor5);
 
     Vendedor vendedor6("Vendedor6", "V006", 1400.0);
-    vectorVendedores.push_back(&vendedor6);
+    vectorVendedores.push_back(vendedor6);
 
     Vendedor vendedor7("Vendedor7", "V007", 1700.0);
-    vectorVendedores.push_back(&vendedor7);
+    vectorVendedores.push_back(vendedor7);
 
     Vendedor vendedor8("Vendedor8", "V008", 1600.0);
-    vectorVendedores.push_back(&vendedor8);
+    vectorVendedores.push_back(vendedor8);
 
     Vendedor vendedor9("Vendedor9", "V009", 1800.0);
-    vectorVendedores.push_back(&vendedor9);
+    vectorVendedores.push_back(vendedor9);
 
     Vendedor vendedor10("Vendedor10", "V010", 2000.0);
-    vectorVendedores.push_back(&vendedor10);
+    vectorVendedores.push_back(vendedor10);
 
     // Crear productos por defecto
     Producto producto1("Producto1", 10.0, 50);
@@ -294,8 +290,6 @@ int main() {
     vectorProductos.push_back(producto5);
     int opcion;
     bool salir = false;
-    string eleccion, codcli;
-    float desc;
 
     while (!salir) {
         cout << "SISTEMA COMERCIAL" << endl;
@@ -320,14 +314,12 @@ int main() {
         }
         catch (const int e) {
             try{
-                if(opcion > 9){
-                    throw(1);
-                }
                 switch (opcion) {
                 case 1: {
                     cout << "Ingrese el nombre del cliente: ";
                     string nombre;
-                    cin >> nombre;
+                    cin.ignore();
+                    getline(cin, nombre);
 
                     cout << "Ingrese el codigo del cliente: ";
                     string codigo;
@@ -366,22 +358,7 @@ int main() {
                 }
 
                 case 2: {
-                    string codcli;
-                    cout << "Codigo de cliente: " ; 
-                    cin >> codcli;
-                    for (const auto persona : vectorPersonas) {
-                        if (dynamic_cast<ClienteIndividual*>(persona)) {
-                            if(codcli == persona->codigo){
-                                cout << "Cliente encontrado, pertenece a 'Cliente Individual\n";
-                            }
-                        }
-                        else if (dynamic_cast<ClienteCorporativo*>(persona)) {
-                            if(codcli == persona->codigo){
-                                cout << "Cliente encontrado, pertenece a 'Cliente Corporativo\n";
-
-                            }
-                        }
-                    }
+                    // Código para buscar clientes
                     break;
                 }
 
@@ -425,10 +402,11 @@ int main() {
                 }
 
                 case 5: {
-                    cout << "Codigo de cliente: " ;
-                    cin >> codcli;
+                    string eleccion, codcli;
+                    float desc;
+                    cout<<"codigo de cliente: "; cin>> codcli;
                     for (const auto persona : vectorPersonas) {
-                        /*if (dynamic_cast<ClienteIndividual*>(persona)) {
+                        if (dynamic_cast<ClienteIndividual>(persona)) {
                             if(codcli == persona->codigo){
                                 desc = persona->getDescuento();
                             }
@@ -437,10 +415,14 @@ int main() {
                             if(codcli == persona->codigo){
                                 desc = persona->getDescuento();
                             }
-                        }*/
+                        }
                     }
                     for(Producto p : vectorProductos){
                         cout << p;
+                    }
+                    cout<<"ingrese el nombre del producto que desee";
+                    cin>>eleccion;
+                    for(Producto p : vectorProductos){
                         if (p.getnom() == eleccion){
                             cout<<"producto encontrado";
                             calcularTotal(p,desc);
@@ -470,7 +452,7 @@ int main() {
                     throw runtime_error("Opcion invalida");
             }
             }
-            catch(const int e){
+            catch(const exception e){
                 cout << "Error: Opcion no disponible\n" << endl;
             }
         }
