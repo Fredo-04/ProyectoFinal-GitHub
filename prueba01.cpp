@@ -173,6 +173,7 @@ private:
     int stock;
 
 public:
+    string getnom(){return nombre;}
     Producto(const string& nombre, float precio, int stock) : nombre(nombre), precio(precio), stock(stock) {}
 
     void agregarStock(int cantidad) {
@@ -199,7 +200,7 @@ float calcularTotal(const Producto& producto, float descuento) {
 
 void mostrarClientes(const vector<Persona*> vectorPersonas) {
     cout << "Lista de Clientes:" << endl;
-    for (const auto& persona : vectorPersonas) {
+    for (const auto persona : vectorPersonas) {
         if (dynamic_cast<ClienteIndividual*>(persona)) {
             cout << "Cliente Individual:" << endl;
         }
@@ -212,12 +213,19 @@ void mostrarClientes(const vector<Persona*> vectorPersonas) {
 
 void mostrarVendedores(const vector<Persona*> vectorPersonas) {
     cout << "Lista de Vendedores:" << endl;
-    for (const auto& persona : vectorPersonas) {
+    for (const auto persona : vectorPersonas) {
         if (dynamic_cast<Vendedor*>(persona)) {
             cout << "Vendedor:" << endl;
             cout << *persona << endl;
         }
     }
+}
+bool compararPorNombre(const Persona* persona1, const Persona* persona2) {
+    return persona1->nombre < persona2->nombre;
+}
+
+void ordenarPorNombre(vector<Persona*> vectorPersonas) {
+    sort(vectorPersonas.begin(), vectorPersonas.end(), compararPorNombre);
 }
 
 int main() {
@@ -396,19 +404,43 @@ int main() {
                 }
 
                 case 5: {
+                    string eleccion, codcli;
+                    float desc;
+                    cout<<"codigo de cliente: "; cin>> codcli;
+                    for (const auto persona : vectorPersonas) {
+                        if (dynamic_cast<ClienteIndividual*>(persona)) {
+                            if(codcli == persona->codigo){
+                                desc = persona->getDescuento();
+                            }
+                        }
+                        else if (dynamic_cast<ClienteCorporativo*>(persona)) {
+                            if(codcli == persona->codigo){
+                                desc = persona->getDescuento();
+                            }
+                        }
+                    }
                     for(Producto p : vectorProductos){
                         cout << p;
                     }
-                    
+                    cout<<"ingrese el nombre del producto que desee";
+                    cin>>eleccion;
+                    for(Producto p : vectorProductos){
+                        if (p.getnom() == eleccion){
+                            cout<<"producto encontrado";
+                            calcularTotal(p,desc);
+                        }
+                    }
                     break;
                 }
 
                 case 6: {
+                    ordenarPorNombre(vectorPersonas);
                     mostrarClientes(vectorPersonas);
                     break;
                 }
 
                 case 7: {
+                    ordenarPorNombre(vectorVendedores);
                     mostrarVendedores(vectorVendedores);
                     break;
                 }
