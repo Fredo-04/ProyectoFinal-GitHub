@@ -7,7 +7,7 @@ using namespace std;
 int validarTelefono(int telefono) {
     string telefonoStr = to_string(telefono);
     while (telefonoStr.length() != 9) {
-        cout << "El número de teléfono debe tener 9 dígitos. Inténtelo nuevamente: ";
+        cout << "El número de telefono debe tener 9 digitos. Intentelo nuevamente: ";
         cin >> telefono;
         telefonoStr = to_string(telefono);
     }
@@ -16,7 +16,7 @@ int validarTelefono(int telefono) {
 
 string validarCod(string dni) {
     while (dni.length() != 4) {
-        cout << "El número de teléfono debe tener 9 dígitos. Inténtelo nuevamente: ";
+        cout << "El codigo debe tener 4 digitos. Intentelo nuevamente: ";
         cin >> dni;
     }
     return dni;
@@ -197,7 +197,9 @@ public:
     void agregarStock(int cantidad) {
         stock += cantidad;
     }
-
+    void quitarStock(int cant){
+        stock -= cant;
+    }
     void modificarPrecio(float nuevoPrecio) {
         precio = nuevoPrecio;
     }
@@ -482,6 +484,7 @@ int main() {
                             float total;
                             cout<<"producto encontrado\n";
                             total = calcularTotal(p,cant,desc);
+                            p.quitarStock(cant);
                             cout << "Venta " << producto1.cantidadventas << endl;
                             cout << "Cliente: " << nom << endl;
                             cout << " - PRODUCTO - " << " - CANTIDAD - " << " - PRECIO UNI - " << " - TOTAL - " << endl;
