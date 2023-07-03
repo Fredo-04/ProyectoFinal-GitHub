@@ -14,12 +14,12 @@ int validarTelefono(int telefono) {
     return telefono;
 }
 
-string validarCod(string dni) {
-    while (dni.length() != 4) {
+string validarCod(string cod) {
+    while (cod.length() != 4) {
         cout << "El codigo debe tener 4 digitos. Intentelo nuevamente: ";
-        cin >> dni;
+        cin >> cod;
     }
-    return dni;
+    return cod;
 }
 
 template <typename T>
