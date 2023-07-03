@@ -14,7 +14,22 @@ int validarTelefono(int telefono) {
     return telefono;
 }
 
+string validarCod(string dni) {
+    while (dni.length() != 4) {
+        cout << "El número de teléfono debe tener 9 dígitos. Inténtelo nuevamente: ";
+        cin >> dni;
+    }
+    return dni;
+}
 
+template <typename T>
+T validarPositivo(T valor){
+    while (valor < 0){
+        cout << "Valor incorrecto, vuelva a ingresar: ";
+        cin >> valor;
+    }
+    return valor;
+}
 
 class Persona {
 private:
@@ -26,15 +41,15 @@ public:
     string codigo;
     string nombre;
     int telefono;
-
+    float desc;
     Persona(string nombre, string codigo) : nombre(nombre), codigo(codigo) {}
     Persona(string nombre, string codigo, int telefono, string clave, string correoelec) : nombre(nombre), codigo(codigo), telefono(telefono), clave(clave), correoelec(correoelec) {}
 
     friend ostream& operator<<(ostream& os, Persona& per) {
         os << "Nombre: " << per.nombre << endl;
-        os << "Código: " << per.codigo << endl;
-        os << "Teléfono: " << per.telefono << endl;
-        os << "Correo Electrónico: " << per.correoelec << endl;
+        os << "Codigo: " << per.codigo << endl;
+        os << "Telefono: " << per.telefono << endl;
+        os << "Correo: " << per.correoelec << endl;
         return os;
     }
 
@@ -45,9 +60,10 @@ public:
 class ClienteIndividual : public Persona {
 private:
     string nivel;
-    float desc;
 
 public:
+    float desc;
+
     ClienteIndividual(string nombre, string codigo, int telefono, string clave, string correoelec) : Persona(nombre, codigo, telefono, clave, correoelec) {
         nivel = "C";
         desc = 3.0 / 100.0;
@@ -55,7 +71,7 @@ public:
 
     void nivelA() {
         if (nivel == "A") {
-            cout << "Ya se encuentra en la categoría A" << endl;
+            cout << "Ya se encuentra en la categoria A" << endl;
         }
         else {
             nivel = "A";
@@ -64,7 +80,7 @@ public:
 
     void nivelB() {
         if (nivel == "B") {
-            cout << "Ya se encuentra en la categoría B" << endl;
+            cout << "Ya se encuentra en la categoria B" << endl;
         }
         else {
             nivel = "B";
@@ -73,7 +89,7 @@ public:
 
     void nivelC() {
         if (nivel == "C") {
-            cout << "Ya se encuentra en la categoría C" << endl;
+            cout << "Ya se encuentra en la categoria C" << endl;
         }
         else {
             nivel = "C";
@@ -82,7 +98,7 @@ public:
 
     void nivelD() {
         if (nivel == "D") {
-            cout << "Ya se encuentra en la categoría D" << endl;
+            cout << "Ya se encuentra en la categoria D" << endl;
         }
         else {
             nivel = "D";
@@ -102,17 +118,17 @@ public:
 class ClienteCorporativo : public Persona {
 private:
     string nivel;
-    float desc;
 
 public:
+    float desc;
     ClienteCorporativo(string nombre, string codigo, int telefono, string clave, string correoelec) : Persona(nombre, codigo, telefono, clave, correoelec) {
         nivel = "C";
         desc = 10.0 / 100.0;
     }
-
+    
     void nivelA() {
         if (nivel == "A") {
-            cout << "Ya se encuentra en la categoría A" << endl;
+            cout << "Ya se encuentra en la categoria A" << endl;
         }
         else {
             nivel = "A";
@@ -121,7 +137,7 @@ public:
 
     void nivelB() {
         if (nivel == "B") {
-            cout << "Ya se encuentra en la categoría B" << endl;
+            cout << "Ya se encuentra en la categoria B" << endl;
         }
         else {
             nivel = "B";
@@ -130,7 +146,7 @@ public:
 
     void nivelC() {
         if (nivel == "C") {
-            cout << "Ya se encuentra en la categoría C" << endl;
+            cout << "Ya se encuentra en la categoria C" << endl;
         }
         else {
             nivel = "C";
@@ -139,13 +155,12 @@ public:
 
     void nivelD() {
         if (nivel == "D") {
-            cout << "Ya se encuentra en la categoría D" << endl;
+            cout << "Ya se encuentra en la categoria D" << endl;
         }
         else {
             nivel = "D";
         }
     }
-
     void agregarEnVector(vector<Persona*> vectorPersonas) {
         vectorPersonas.push_back(this);
         cout << "El cliente corporativo se ha agregado correctamente al vector." << endl;
@@ -159,9 +174,9 @@ public:
 class Vendedor : public Persona {
 public:
     float salario;
-
+    static int contvendedores;
     Vendedor(string nombre, string codigo, float salario) : Persona(nombre, codigo), salario(salario) {}
-
+    static void aumentarVendedor(){contvendedores++;}
     void agregarEnVector(vector<Persona*> vectorPersonas) {
         vectorPersonas.push_back(this);
         cout << "El vendedor se ha agregado correctamente al vector." << endl;
@@ -173,11 +188,12 @@ private:
     string nombre;
     float precio;
     int stock;
-
 public:
+    static int cantidadventas;
+    Producto(string nombre, float precio, int stock) : nombre(nombre), precio(precio), stock(stock) {}
     string getnom(){return nombre;}
-    Producto(const string& nombre, float precio, int stock) : nombre(nombre), precio(precio), stock(stock) {}
-
+    float getprecio(){return precio;}
+    int getstock(){return stock;}
     void agregarStock(int cantidad) {
         stock += cantidad;
     }
@@ -185,8 +201,8 @@ public:
     void modificarPrecio(float nuevoPrecio) {
         precio = nuevoPrecio;
     }
-
-    friend float calcularTotal(const Producto& producto, float descuento);
+    static void ventaRealizada(){cantidadventas++;}
+    friend float calcularTotal(const Producto& producto, int cantidad, float descuento);
     friend ostream& operator<<(ostream& os, const Producto& producto){
         os << "Nombre: " << producto.nombre << endl;
         os << "Precio: S/" << producto.precio << endl;
@@ -195,8 +211,13 @@ public:
     }
 };
 
-float calcularTotal(const Producto& producto, float descuento) {
-    float total = (producto.precio * producto.stock) * descuento;
+float calcularTotal(const Producto& producto, int cantidad, float descuento) {
+    while (cantidad > producto.stock){
+        cout << "Cantidad superior a stock, vuelva a ingresar: " << endl;
+        cin >> cantidad;
+    }
+    float total = (producto.precio * cantidad) * descuento;
+    producto.ventaRealizada();
     return total;
 }
 
@@ -222,14 +243,15 @@ void mostrarVendedores(const vector<Persona*> vectorPersonas) {
         }
     }
 }
-bool compararPorNombre(const Persona* persona1, const Persona* persona2) {
-    return persona1->nombre < persona2->nombre;
+bool compararPorCodigo(const Persona* persona1, const Persona* persona2) {
+    return persona1->codigo < persona2->codigo;
 }
 
-void ordenarPorNombre(vector<Persona*> vectorPersonas) {
-    sort(vectorPersonas.begin(), vectorPersonas.end(), compararPorNombre);
+void ordenarPorNombre(vector<Persona*> vectorPersonas) {                                    
+    sort(vectorPersonas.begin(), vectorPersonas.end(), compararPorCodigo);
 }
-
+//int Vendedor::contvendedor = 0;
+int Producto::cantidadventas = 0;
 int main() {
     vector<Persona*> vectorPersonas;
     vector<Producto> vectorProductos;
@@ -367,6 +389,7 @@ int main() {
 
                 case 2: {
                     string codcli;
+                
                     cout << "Codigo de cliente: " ; 
                     cin >> codcli;
                     for (const auto persona : vectorPersonas) {
@@ -381,6 +404,7 @@ int main() {
 
                             }
                         }
+                        else{}
                     }
                     break;
                 }
@@ -413,10 +437,12 @@ int main() {
                     cout << "Ingrese el precio del producto: ";
                     float precio;
                     cin >> precio;
+                    precio = validarPositivo<float>(precio);
 
                     cout << "Ingrese el stock del producto: ";
                     int stock;
                     cin >> stock;
+                    stock = validarPositivo<int>(stock);
 
                     Producto producto(nombre, precio, stock);
                     vectorProductos.push_back(producto);
@@ -425,27 +451,44 @@ int main() {
                 }
 
                 case 5: {
+                    int cant;
+                    string nom;
                     cout << "Codigo de cliente: " ;
                     cin >> codcli;
                     for (const auto persona : vectorPersonas) {
-                        /*if (dynamic_cast<ClienteIndividual*>(persona)) {
+                        if (dynamic_cast<ClienteIndividual*>(persona)) {
                             if(codcli == persona->codigo){
-                                desc = persona->getDescuento();
+                                desc = persona->desc;
+                                nom = persona->nombre;
+
                             }
                         }
                         else if (dynamic_cast<ClienteCorporativo*>(persona)) {
                             if(codcli == persona->codigo){
-                                desc = persona->getDescuento();
+                                desc = persona->desc;
+                                nom = persona->nombre;
+
                             }
-                        }*/
-                    }
-                    for(Producto p : vectorProductos){
-                        cout << p;
-                        if (p.getnom() == eleccion){
-                            cout<<"producto encontrado";
-                            calcularTotal(p,desc);
                         }
                     }
+                    cout << "Ingrese nombre del producto a adquirir: ";
+                    cin >> eleccion;
+                    cout << "Ingrese cantidad a comprar: \n";
+                    cin >> cant;
+                    cant = validarPositivo<int>(cant);
+                    
+                    for(Producto p : vectorProductos){
+                        if (p.getnom() == eleccion){
+                            float total;
+                            cout<<"producto encontrado\n";
+                            total = calcularTotal(p,cant,desc);
+                            cout << "Venta " << producto1.cantidadventas << endl;
+                            cout << "Cliente: " << nom << endl;
+                            cout << " - PRODUCTO - " << " - CANTIDAD - " << " - PRECIO UNI - " << " - TOTAL - " << endl;
+                            cout << "   " << p.getnom() << "        " << cant << "              " << p.getprecio() << "            " << total << endl;
+                        }
+                    }
+                    
                     break;
                 }
 
@@ -462,6 +505,7 @@ int main() {
                 }
 
                 case 8: {
+                    cout << "Hasta pronto!" << endl;
                     salir = true;
                     break;
                 }
@@ -472,10 +516,12 @@ int main() {
             }
             catch(const int e){
                 cout << "Error: Opcion no disponible\n" << endl;
+                break;
             }
         }
         catch (char e){
             cout << "Error: Opcion invalida\n";
+            break;
         }
     }    
 
